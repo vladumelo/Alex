@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="white">
+  <title>Алексей — как я выбрал трезвость</title>
+  <style>
+    /* ====== CSS RESET (light) ====== */
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body, h1, h2, h3, p, ul { margin: 0; }
+    img { max-width: 100%; display: block; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+
+    /* ====== THEME ====== */
+    :root{
+      --bg1: #ffffff;
+      --text: #0f172a;
+      --muted: #475569;
+      --brand: #6C7CFF;    /* soft indigo */
+      --brand-2: #54E0D7;  /* mint */
+      --accent: #FF7AC6;   /* pink */
+      --shadow: 0 20px 40px rgba(15,23,42,.08);
+      --radius: 18px;
+      --glass: rgba(255,255,255,.55);
+      --glass-stroke: rgba(255,255,255,.6);
+    }
+
+    body{
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+      color: var(--text);
+      line-height: 1.6;
+      background: linear-gradient(135deg, #f8fbff 0%, #ffffff 30%, #f8fbff 100%);
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+
+    /* soft gradient blobs */
+    .bg-blobs::before,
+    .bg-blobs::after{
+      content:"";
+      position: fixed;
+      inset: auto auto 10% -10%;
+      width: 60vmax; height: 60vmax;
+      background: radial-gradient(35% 35% at 50% 50%, rgba(108,124,255,.28), rgba(108,124,255,0));
+      filter: blur(30px);
+      transform: translateZ(0);
+      z-index: -2;
+      animation: float1 18s ease-in-out infinite alternate;
+    }
+    .bg-blobs::after{
+      inset: -10% -10% auto auto;
+      background: radial-gradient(35% 35% at 50% 50%, rgba(84,224,215,.28), rgba(84,224,215,0));
+      animation: float2 22s ease-in-out infinite alternate;
+    }
+    @keyframes float1{ to{ transform: translate3d(10%, -5%, 0) scale(1.05);} }
+    @keyframes float2{ to{ transform: translate3d(-8%, 6%, 0) scale(1.08);} }
+
+    /* ====== LAYOUT ====== */
+    .container{ width: min(1120px, 92vw); margin-inline: auto; }
+
+    header{
+      position: sticky; top: env(safe-area-inset-top); z-index: 50;
+      backdrop-filter: saturate(140%) blur(12px);
+      background: rgba(255,255,255,.65);
+      border-bottom: 1px solid rgba(15,23,42,.06);
+    }
+    .nav{
+      display: flex; align-items: center; justify-content: space-between;
+      padding: clamp(10px, 2.3vh, 18px) 0;
+      gap: 12px;
+    }
+    .logo{
+      display:flex; align-items:center; gap:10px; font-weight: 800; letter-spacing:.3px;
+    }
+    .logo-badge{
+      width: 36px; height: 36px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--brand), var(--accent));
+      box-shadow: var(--shadow);
+    }
+    .nav a{ color: var(--muted); text-decoration: none; font-weight: 600; }
+    .nav a:hover{ color: var(--text); }
+
+    .cta{
+      display:inline-flex; align-items:center; gap:10px;
+      padding: 12px 16px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+      color: #fff; text-decoration: none; font-weight: 700;
+      box-shadow: 0 12px 24px rgba(108,124,255,.25);
+      transition: transform .15s ease;
+      white-space: nowrap;
+    }
+    .cta:hover{ transform: translateY(-1px); }
+    .cta svg{ width: 18px; height: 18px; }
+
+    /* ====== HERO ====== */
+    .hero{
+      padding: clamp(56px, 8vh, 100px) 0 clamp(24px, 6vh, 60px);
+    }
+    .hero .headline{
+      font-size: clamp(28px, 4.6vw, 56px);
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      font-weight: 900;
+    }
+    .hero .sub{ font-size: clamp(16px, 2.2vw, 20px); color: var(--muted); margin-top: 14px;}
+    .hero-card{
+      margin-top: 28px; display: grid; gap: 18px;
+      grid-template-columns: 1.2fr .8fr;
+    }
+    @media (max-width: 900px){
+      .hero-card{ grid-template-columns: 1fr; }
+    }
+    .glass{
+      background: var(--glass);
+      backdrop-filter: blur(14px) saturate(140%);
+      -webkit-backdrop-filter: blur(14px) saturate(140%);
+      border: 1px solid var(--glass-stroke);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .hero-panel{ padding: clamp(18px, 2.8vw, 30px); }
+    .checklist{ display:grid; gap:12px; margin-top: 8px; }
+    .check{ display:flex; gap:12px; align-items:flex-start; }
+    .check svg{ flex: 0 0 22px;}
+    .tagline{
+      display:flex; gap:10px; align-items:center; color: var(--muted);
+      font-size: 14px; margin-top: 10px;
+    }
+    .hero-stats{
+      display:grid; grid-template-columns: repeat(3,1fr); gap:14px; margin-top: 12px;
+    }
+    .stat{ text-align:center; padding:18px; }
+    .stat b{ font-size: clamp(20px, 3.2vw, 28px); }
+
+    /* ====== SECTIONS ====== */
+    section{ padding: clamp(48px, 8vh, 110px) 0; }
+    .section-title{
+      font-weight: 900; letter-spacing:-.02em;
+      font-size: clamp(22px, 3.6vw, 38px);
+      margin-bottom: 18px;
+    }
+    .muted{ color: var(--muted); }
+
+    .grid-2{ display:grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    @media (max-width: 900px){ .grid-2{ grid-template-columns: 1fr; } }
+    .grid-3{ display:grid; grid-template-columns: repeat(3,1fr); gap: 18px; }
+    @media (max-width: 900px){ .grid-3{ grid-template-columns: 1fr; } }
+
+    .step{ padding: 20px; }
+    .step h3{ margin-bottom: 6px; }
+
+    /* timeline */
+    .timeline{ position: relative; padding-left: 20px; }
+    .timeline::before{
+      content:""; position: absolute; left: 10px; top: 0; bottom: 0;
+      width: 2px; background: linear-gradient(var(--brand), var(--brand-2));
+      border-radius: 2px;
+    }
+    .tl-item{
+      position: relative; margin: 14px 0; padding-left: 16px;
+    }
+    .tl-item::before{
+      content:""; position: absolute; left: -1px; top: .4em;
+      width: 12px; height: 12px; border-radius: 999px;
+      background: linear-gradient(135deg, var(--brand), var(--accent));
+      box-shadow: 0 4px 10px rgba(0,0,0,.12);
+    }
+
+    /* testimonials */
+    .quote{
+      padding: 20px; font-size: 16px;
+    }
+    .quote p{ margin-top: 6px; }
+    .quote .who{ font-weight: 700; margin-top: 10px; }
+
+    /* pricing/UTP */
+    .utp{
+      text-align: center;
+      padding: clamp(24px, 4vh, 36px);
+    }
+    .badge{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 12px; border-radius:999px; font-weight: 700;
+      background: linear-gradient(135deg, rgba(108,124,255,.15), rgba(84,224,215,.15));
+      border:1px solid rgba(15,23,42,.08);
+      margin-bottom:10px;
+    }
+    .price{
+      font-size: clamp(28px, 5vw, 56px);
+      font-weight: 900; letter-spacing: -.02em; margin: 8px 0 12px;
+    }
+    .pill-list{ display:flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+    .pill{ padding:8px 12px; border-radius: 999px; background: rgba(15,23,42,.04); border:1px solid rgba(15,23,42,.06); }
+
+    /* footer */
+    footer{ color: var(--muted); padding-bottom: clamp(28px, 4vh, 40px); }
+    .foot{ display:flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+    /* ====== REVEAL ANIMATIONS ====== */
+    .reveal{ opacity: 0; transform: translateY(22px) scale(.98); transition: all .7s cubic-bezier(.2,.8,.2,1); }
+    .reveal.visible{ opacity: 1; transform: translateY(0) scale(1); }
+
+    /* ====== SAFE FALLBACKS ====== */
+    @supports not ((backdrop-filter: blur(10px)) or (-webkit-backdrop-filter: blur(10px))){
+      .glass{ background: #ffffff; }
+    }
+  </style>
+</head>
+<body class="bg-blobs">
+  <header>
+    <div class="container nav">
+      <div class="logo">
+        <div class="logo-badge" aria-hidden="true"></div>
+        <span>Алексей &nbsp;•&nbsp; Трезвость как проект</span>
+      </div>
+      <nav style="display:flex; gap:14px; align-items:center;">
+        <a href="#story">История</a>
+        <a href="#method">Метод</a>
+        <a href="#results">Результаты</a>
+        <a href="#faq">FAQ</a>
+        <a class="cta" href="#utp" role="button" aria-label="Записаться">
+          <!-- inline icon -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+          Получить план
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <section class="hero">
+      <div class="container">
+        <h1 class="headline reveal">«Я не боролся с алкоголем — я спроектировал новую жизнь»</h1>
+        <p class="sub reveal">Алексей прошёл путь от «пятницы каждый день» до ясной трезвости и собрал рабочую систему в 4 шага. Ни морализаторства, ни «силы воли на пределе». Только инженерный подход — как к проекту.</p>
+
+        <div class="hero-card">
+          <div class="glass hero-panel reveal">
+            <div class="tagline">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l3 3"/></svg>
+              14 дней — чтобы увидеть первые устойчивые изменения
+            </div>
+            <div class="checklist">
+              <div class="check">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 6L9 17l-5-5"/>
+                </svg>
+                <div><b>Без стыда и ломки:</b> меняем три ключевые привычки, которые «поджигают» желание выпить.</div>
+              </div>
+              <div class="check">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 6L9 17l-5-5"/>
+                </svg>
+                <div><b>С системой:</b> дневные сценарии, триггеры и «якоря» — всё прописано как ТЗ.</div>
+              </div>
+              <div class="check">
+                <svg viewBox="0 0 24 24  " fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 6L9 17l-5-5"/>
+                </svg>
+                <div><b>В своей скорости:</b> без запретов «навсегда», только чёткие спринты.</div>
+              </div>
+            </div>
+
+            <div class="hero-stats">
+              <div class="glass stat">
+                <b>14&nbsp;дней</b>
+                <div class="muted">первый спринт</div>
+              </div>
+              <div class="glass stat">
+                <b>4 шага</b>
+                <div class="muted">понятный метод</div>
+              </div>
+              <div class="glass stat">
+                <b>1&nbsp;план</b>
+                <div class="muted">под ваш ритм жизни</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="glass hero-panel reveal">
+            <h3 style="margin-bottom:6px;">Коротко об Алексее</h3>
+            <p class="muted">10 лет работал в стройке и IT-продуктах, привык думать как менеджер проекта. Трезвость собрал так же: гипотезы → спринты → ретро.</p>
+            <div class="timeline" style="margin-top: 14px;">
+              <div class="tl-item">
+                <b>Точка А:</b> «знали все: я — «за любой кипиш»»
+              </div>
+              <div class="tl-item">
+                <b>Срывные паттерны:</b> усталость, «наградить себя», компания
+              </div>
+              <div class="tl-item">
+                <b>Перелом:</b> заменил «запреты» на сценарии и метрики
+              </div>
+              <div class="tl-item">
+                <b>Точка Б:</b> чистая энергия, ясная голова, работа и семья в приоритете
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- STORY -->
+    <section id="story">
+      <div class="container">
+        <h2 class="section-title reveal">История без пафоса</h2>
+        <div class="grid-2">
+          <div class="glass step reveal">
+            <h3>01 — Осознать «систему» алкоголя</h3>
+            <p class="muted">Алкоголь — это не «слабость». Это набор триггеров, сценариев и наград. Когда видишь схему — перестаёшь видеть «чудовище».</p>
+          </div>
+          <div class="glass step reveal">
+            <h3>02 — Спринт на 14 дней</h3>
+            <p class="muted">Вместо клятвы «никогда» — небольшой спринт с понятными правилами и обратной связью. Так мозг не включает протест.</p>
+          </div>
+          <div class="glass step reveal">
+            <h3>03 — Смена трёх сцепок</h3>
+            <p class="muted">Меняем: <b>стресс→выпить</b>, <b>пятница→выпить</b>, <b>компания→выпить</b> на новые быстрые ритуалы и «якоря».</p>
+          </div>
+          <div class="glass step reveal">
+            <h3>04 — Метрики вместо эмоций</h3>
+            <p class="muted">Считаем сон, энергию, фокус, конфликты. Прогресс становится виден и закрепляется.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- METHOD -->
+    <section id="method">
+      <div class="container">
+        <h2 class="section-title reveal">Метод «Трезвость как проект»</h2>
+        <div class="grid-3">
+          <div class="glass step reveal">
+            <h3>Шаг 1. Диагностика</h3>
+            <p class="muted">30 минут, чтобы собрать карту триггеров и понять ваш контекст: ритм, работа, семья.</p>
+          </div>
+          <div class="glass step reveal">
+            <h3>Шаг 2. План</h3>
+            <p class="muted">Индивидуальный сценарий на 14 дней: что делать утром, днём и вечером, что говорить друзьям, чем заменять.</p>
+          </div>
+          <div class="glass step reveal">
+            <h3>Шаг 3. Сопровождение</h3>
+            <p class="muted">Чек-ин каждые 2–3 дня: корректируем план как настоящий продуктовый спринт.</p>
+          </div>
+        </div>
+
+        <div class="glass step reveal" style="margin-top:18px;">
+          <h3>Что внутри плана</h3>
+          <ul class="muted" style="padding-left: 18px; margin-top: 6px;">
+            <li>Новые вечерние ритуалы: «переключатели» на 15 минут</li>
+            <li>Скрипты ответов: как отказать без конфликтов</li>
+            <li>Список быстрых «дофамин-замен» дома и вне дома</li>
+            <li>Настройка сна и питания без фанатизма</li>
+            <li>Трекер метрик: сон, энергия, внимание, настроение</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESULTS -->
+    <section id="results">
+      <div class="container">
+        <h2 class="section-title reveal">Результаты и обратная связь</h2>
+        <div class="grid-3">
+          <div class="glass quote reveal">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 10h.01M15 10h.01M7 13h10a4 4 0 0 1-8 0"/></svg>
+            <p>«Впервые не срывался на «просто один бокал по пути домой». Понял, где меня «подхватывает», и заменил это на короткий ритуал»</p>
+            <div class="who">— Роман, 34</div>
+          </div>
+          <div class="glass quote reveal">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 10h.01M15 10h.01M7 13h10a4 4 0 0 1-8 0"/></svg>
+            <p>«Шаги простые, без морали. Работают, потому что считаем метрики, а не эмоции. Через неделю — ясная голова»</p>
+            <div class="who">— Влад, 29</div>
+          </div>
+          <div class="glass quote reveal">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 10h.01M15 10h.01M7 13h10a4 4 0 0 1-8 0"/></svg>
+            <p>«Раньше «запрещал себе» и срывался. Здесь нет запретов «на века» — есть план на 14 дней, и он лёгкий»</p>
+            <div class="who">— Кирилл, 31</div>
+          </div>
+        </div>
+
+        <div class="glass step reveal" style="margin-top:18px;">
+          <h3>Важно</h3>
+          <p class="muted">Метод — про поведение и среду, не про медицину. Если у вас зависимость с физическими симптомами — обратитесь к врачу. Это не медицинская услуга.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq">
+      <div class="container">
+        <h2 class="section-title reveal">Частые вопросы</h2>
+        <div class="grid-2">
+          <div class="glass step reveal">
+            <h3>А если «всё пропало»?</h3>
+            <p class="muted">Срыв — это данные для улучшения сценария. Мы фиксируем причину и усиливаем «якоря» — без чувства вины.</p>
+          </div>
+          <div class="glass step reveal">
+            <h3>Нужна ли «стальная воля»?</h3>
+            <p class="muted">Нет. Мы не боремся с собой, мы перенастраиваем контексты. Это проще и устойчивее.</p>
+          </div>
+          <div class="glass step reveal">
+            <h3>Что с компанией и праздниками?</h3>
+            <p class="muted">Есть готовые сценарии: как отвечать, чем занять руки, как выйти красиво.</p>
+          </div>
+          <div class="glass step reveal">
+            <h3>Можно пить «иногда»?</h3>
+            <p class="muted">Это ваш выбор. Наша цель — вернуть контроль. Режим вы придумаете сами.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- UTP -->
+    <section id="utp">
+      <div class="container">
+        <div class="glass utp reveal">
+          <div class="badge">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 1v22M1 12h22"/>
+            </svg>
+            Уникальное торговое предложение
+          </div>
+          <h2 class="section-title">«Личная стратегия трезвости — за 14 дней»</h2>
+          <p class="muted">Индивидуальный план + сопровождение. Если через 14 дней вы не видите пользу — просто скажите. Оплата — по факту результата.</p>
+          <div class="price">0 ₽ — диагностика · далее по результату</div>
+          <div class="pill-list" style="margin: 10px 0 16px;">
+            <div class="pill">30‑минутная диагностика</div>
+            <div class="pill">План на 14 дней</div>
+            <div class="pill">Чек‑ин каждые 2–3 дня</div>
+            <div class="pill">Скрипты и ритуалы</div>
+            <div class="pill">Трекер прогресса</div>
+          </div>
+          <div style="display:flex; gap:10px; justify-content:center; flex-wrap: wrap;">
+            <a class="cta" href="#form" role="button" aria-label="Записаться">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+              Записаться на диагностику
+            </a>
+            <a class="cta" href="#" id="shareBtn" role="button" aria-label="Поделиться" style="background: linear-gradient(135deg, var(--accent), var(--brand));">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/>
+                <path d="M16 6l-4-4-4 4"/>
+                <path d="M12 2v14"/>
+              </svg>
+              Поделиться
+            </a>
+          </div>
+        </div>
+
+        <!-- simple inline form (no backend) -->
+        <div id="form" class="glass step reveal" style="margin-top:18px;">
+          <h3>Оставить заявку</h3>
+          <p class="muted">Оставьте контакт — Алексей свяжется и проведёт бесплатную диагностику.</p>
+          <form onsubmit="event.preventDefault(); submitLead(this)">
+            <div class="grid-2">
+              <label class="step">
+                <div>Имя</div>
+                <input required name="name" placeholder="Ваше имя" class="glass" style="padding:12px; width:100%; border-radius:12px; border:1px solid rgba(15,23,42,.08);" />
+              </label>
+              <label class="step">
+                <div>Контакт (телеграм/телефон/email)</div>
+                <input required name="contact" placeholder="@username или номер" class="glass" style="padding:12px; width:100%; border-radius:12px; border:1px solid rgba(15,23,42,.08);" />
+              </label>
+            </div>
+            <label class="step" style="display:block;">
+              <div>Комментарий</div>
+              <textarea name="msg" rows="4" placeholder="Коротко о вашей цели" class="glass" style="padding:12px; width:100%; border-radius:12px; border:1px solid rgba(15,23,42,.08);"></textarea>
+            </label>
+            <button class="cta" type="submit">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+              Отправить
+            </button>
+            <div id="formNote" class="muted" style="margin-top:10px; font-size: 14px;"></div>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container foot">
+      <div>© <span id="y"></span> Алексей — «Трезвость как проект»</div>
+      <div class="muted" style="font-size: 13px;">Отказ от ответственности: не медицинская услуга. При наличии симптомов зависимости — обратитесь к врачу.</div>
+    </div>
+  </footer>
+
+  <script>
+    // Year
+    document.getElementById('y').textContent = new Date().getFullYear();
+
+    // IntersectionObserver reveal
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) e.target.classList.add('visible');
+      });
+    }, { threshold: .12, rootMargin: '0px 0px -60px 0px' });
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+    // Share API
+    const shareBtn = document.getElementById('shareBtn');
+    if (shareBtn) {
+      shareBtn.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const data = {
+          title: document.title,
+          text: 'Алексей — «Трезвость как проект». Мой путь и метод на 14 дней.',
+          url: location.href
+        };
+        if (navigator.share) {
+          try { await navigator.share(data); } 
+          catch(err){ /* ignore */ }
+        } else {
+          alert('Скопируйте ссылку: ' + location.href);
+        }
+      });
+    }
+
+    // Fake form (stores lead to localStorage; can be wired to Telegram Bot API or form backend)
+    function submitLead(form){
+      const name = form.name.value.trim();
+      const contact = form.contact.value.trim();
+      const msg = form.msg.value.trim();
+      const payload = { name, contact, msg, ts: new Date().toISOString() };
+      try{
+        const k = 'alx_leads';
+        const arr = JSON.parse(localStorage.getItem(k) || '[]');
+        arr.push(payload);
+        localStorage.setItem(k, JSON.stringify(arr));
+        document.getElementById('formNote').textContent = 'Готово! Заявка сохранена локально. Подключите отправку в Telegram — подскажу как.';
+        form.reset();
+        // subtle haptic (iOS Safari)
+        if (window.navigator && 'vibrate' in window.navigator) navigator.vibrate(12);
+      }catch(e){
+        document.getElementById('formNote').textContent = 'Не удалось сохранить локально. Напишите напрямую: @username';
+      }
+    }
+  </script>
+</body>
+</html>
