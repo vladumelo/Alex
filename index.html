@@ -1,550 +1,513 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#ffffff">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="white">
-  <title>Алексей — как я выбрал трезвость</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Калькулятор покрытий — быстрые сметы по проекту</title>
   <style>
-    /* ====== CSS RESET (light) ====== */
-    *, *::before, *::after { box-sizing: border-box; }
-    html, body { height: 100%; }
-    body, h1, h2, h3, p, ul { margin: 0; }
-    img { max-width: 100%; display: block; }
-    button, a { -webkit-tap-highlight-color: transparent; }
-
-    /* ====== THEME ====== */
-    :root{
-      --bg1: #ffffff;
+    :root {
+      --bg: #f3f6ff;
+      --card: #ffffff;
       --text: #0f172a;
-      --muted: #475569;
-      --brand: #6C7CFF;    /* soft indigo */
-      --brand-2: #54E0D7;  /* mint */
-      --accent: #FF7AC6;   /* pink */
-      --shadow: 0 20px 40px rgba(15,23,42,.08);
-      --radius: 18px;
-      --glass: rgba(255,255,255,.55);
-      --glass-stroke: rgba(255,255,255,.6);
+      --muted: #64748b;
+      --accent: #4f46e5;
+      --border: #dbe1ef;
+      --shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+      --radius: 16px;
     }
 
-    body{
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       color: var(--text);
-      line-height: 1.6;
-      background: linear-gradient(135deg, #f8fbff 0%, #ffffff 30%, #f8fbff 100%);
-      overflow-x: hidden;
-      scroll-behavior: smooth;
+      background: linear-gradient(180deg, #e9efff 0%, var(--bg) 40%, #ffffff 100%);
     }
 
-    /* soft gradient blobs */
-    .bg-blobs::before,
-    .bg-blobs::after{
-      content:"";
-      position: fixed;
-      inset: auto auto 10% -10%;
-      width: 60vmax; height: 60vmax;
-      background: radial-gradient(35% 35% at 50% 50%, rgba(108,124,255,.28), rgba(108,124,255,0));
-      filter: blur(30px);
-      transform: translateZ(0);
-      z-index: -2;
-      animation: float1 18s ease-in-out infinite alternate;
+    .container {
+      width: min(1160px, 94vw);
+      margin: 0 auto;
+      padding: 24px 0 36px;
     }
-    .bg-blobs::after{
-      inset: -10% -10% auto auto;
-      background: radial-gradient(35% 35% at 50% 50%, rgba(84,224,215,.28), rgba(84,224,215,0));
-      animation: float2 22s ease-in-out infinite alternate;
-    }
-    @keyframes float1{ to{ transform: translate3d(10%, -5%, 0) scale(1.05);} }
-    @keyframes float2{ to{ transform: translate3d(-8%, 6%, 0) scale(1.08);} }
 
-    /* ====== LAYOUT ====== */
-    .container{ width: min(1120px, 92vw); margin-inline: auto; }
-
-    header{
-      position: sticky; top: env(safe-area-inset-top); z-index: 50;
-      backdrop-filter: saturate(140%) blur(12px);
-      background: rgba(255,255,255,.65);
-      border-bottom: 1px solid rgba(15,23,42,.06);
-    }
-    .nav{
-      display: flex; align-items: center; justify-content: space-between;
-      padding: clamp(10px, 2.3vh, 18px) 0;
-      gap: 12px;
-    }
-    .logo{
-      display:flex; align-items:center; gap:10px; font-weight: 800; letter-spacing:.3px;
-    }
-    .logo-badge{
-      width: 36px; height: 36px; border-radius: 10px;
-      background: linear-gradient(135deg, var(--brand), var(--accent));
-      box-shadow: var(--shadow);
-    }
-    .nav a{ color: var(--muted); text-decoration: none; font-weight: 600; }
-    .nav a:hover{ color: var(--text); }
-
-    .cta{
-      display:inline-flex; align-items:center; gap:10px;
-      padding: 12px 16px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, var(--brand), var(--brand-2));
-      color: #fff; text-decoration: none; font-weight: 700;
-      box-shadow: 0 12px 24px rgba(108,124,255,.25);
-      transition: transform .15s ease;
-      white-space: nowrap;
-    }
-    .cta:hover{ transform: translateY(-1px); }
-    .cta svg{ width: 18px; height: 18px; }
-
-    /* ====== HERO ====== */
-    .hero{
-      padding: clamp(56px, 8vh, 100px) 0 clamp(24px, 6vh, 60px);
-    }
-    .hero .headline{
-      font-size: clamp(28px, 4.6vw, 56px);
-      line-height: 1.08;
+    h1 {
+      margin: 0;
+      font-size: clamp(28px, 4vw, 44px);
+      line-height: 1.1;
       letter-spacing: -0.02em;
-      font-weight: 900;
     }
-    .hero .sub{ font-size: clamp(16px, 2.2vw, 20px); color: var(--muted); margin-top: 14px;}
-    .hero-card{
-      margin-top: 28px; display: grid; gap: 18px;
-      grid-template-columns: 1.2fr .8fr;
+
+    .lead {
+      margin: 10px 0 0;
+      max-width: 900px;
+      color: var(--muted);
     }
-    @media (max-width: 900px){
-      .hero-card{ grid-template-columns: 1fr; }
-    }
-    .glass{
-      background: var(--glass);
-      backdrop-filter: blur(14px) saturate(140%);
-      -webkit-backdrop-filter: blur(14px) saturate(140%);
-      border: 1px solid var(--glass-stroke);
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
-    }
-    .hero-panel{ padding: clamp(18px, 2.8vw, 30px); }
-    .checklist{ display:grid; gap:12px; margin-top: 8px; }
-    .check{ display:flex; gap:12px; align-items:flex-start; }
-    .check svg{ flex: 0 0 22px;}
-    .tagline{
-      display:flex; gap:10px; align-items:center; color: var(--muted);
-      font-size: 14px; margin-top: 10px;
-    }
-    .hero-stats{
-      display:grid; grid-template-columns: repeat(3,1fr); gap:14px; margin-top: 12px;
-    }
-    .stat{ text-align:center; padding:18px; }
-    .stat b{ font-size: clamp(20px, 3.2vw, 28px); }
-
-    /* ====== SECTIONS ====== */
-    section{ padding: clamp(48px, 8vh, 110px) 0; }
-    .section-title{
-      font-weight: 900; letter-spacing:-.02em;
-      font-size: clamp(22px, 3.6vw, 38px);
-      margin-bottom: 18px;
-    }
-    .muted{ color: var(--muted); }
-
-    .grid-2{ display:grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-    @media (max-width: 900px){ .grid-2{ grid-template-columns: 1fr; } }
-    .grid-3{ display:grid; grid-template-columns: repeat(3,1fr); gap: 18px; }
-    @media (max-width: 900px){ .grid-3{ grid-template-columns: 1fr; } }
-
-    .step{ padding: 20px; }
-    .step h3{ margin-bottom: 6px; }
-
-    /* timeline */
-    .timeline{ position: relative; padding-left: 20px; }
-    .timeline::before{
-      content:""; position: absolute; left: 10px; top: 0; bottom: 0;
-      width: 2px; background: linear-gradient(var(--brand), var(--brand-2));
-      border-radius: 2px;
-    }
-    .tl-item{
-      position: relative; margin: 14px 0; padding-left: 16px;
-    }
-    .tl-item::before{
-      content:""; position: absolute; left: -1px; top: .4em;
-      width: 12px; height: 12px; border-radius: 999px;
-      background: linear-gradient(135deg, var(--brand), var(--accent));
-      box-shadow: 0 4px 10px rgba(0,0,0,.12);
+      padding: 18px;
+      margin-top: 16px;
     }
 
-    /* testimonials */
-    .quote{
-      padding: 20px; font-size: 16px;
+    .toolbar {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: 1fr auto;
+      align-items: end;
     }
-    .quote p{ margin-top: 6px; }
-    .quote .who{ font-weight: 700; margin-top: 10px; }
 
-    /* pricing/UTP */
-    .utp{
-      text-align: center;
-      padding: clamp(24px, 4vh, 36px);
+    .toolbar textarea {
+      min-height: 98px;
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      padding: 10px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 13px;
     }
-    .badge{
-      display:inline-flex; align-items:center; gap:8px;
-      padding:8px 12px; border-radius:999px; font-weight: 700;
-      background: linear-gradient(135deg, rgba(108,124,255,.15), rgba(84,224,215,.15));
-      border:1px solid rgba(15,23,42,.08);
-      margin-bottom:10px;
+
+    button {
+      border: none;
+      background: linear-gradient(135deg, var(--accent), #7c3aed);
+      color: #fff;
+      border-radius: 12px;
+      padding: 11px 14px;
+      font-weight: 700;
+      cursor: pointer;
     }
-    .price{
-      font-size: clamp(28px, 5vw, 56px);
-      font-weight: 900; letter-spacing: -.02em; margin: 8px 0 12px;
+
+    button.secondary {
+      background: #eef2ff;
+      color: #312e81;
+      border: 1px solid #c7d2fe;
     }
-    .pill-list{ display:flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
-    .pill{ padding:8px 12px; border-radius: 999px; background: rgba(15,23,42,.04); border:1px solid rgba(15,23,42,.06); }
 
-    /* footer */
-    footer{ color: var(--muted); padding-bottom: clamp(28px, 4vh, 40px); }
-    .foot{ display:flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
 
-    /* ====== REVEAL ANIMATIONS ====== */
-    .reveal{ opacity: 0; transform: translateY(22px) scale(.98); transition: all .7s cubic-bezier(.2,.8,.2,1); }
-    .reveal.visible{ opacity: 1; transform: translateY(0) scale(1); }
+    th, td {
+      border-bottom: 1px solid var(--border);
+      padding: 8px 6px;
+      vertical-align: top;
+    }
 
-    /* ====== SAFE FALLBACKS ====== */
-    @supports not ((backdrop-filter: blur(10px)) or (-webkit-backdrop-filter: blur(10px))){
-      .glass{ background: #ffffff; }
+    th {
+      text-align: left;
+      color: var(--muted);
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    input, select {
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      padding: 7px 8px;
+      font-size: 14px;
+      background: #fff;
+    }
+
+    .sum {
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .top-grid {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: 1.3fr 0.7fr;
+    }
+
+    .muted { color: var(--muted); }
+
+    .summary-item {
+      background: #f8faff;
+      border: 1px solid #dfe7ff;
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+
+    .summary-item b { font-size: 22px; }
+
+    .detail-panel {
+      margin-top: 18px;
+      display: none;
+    }
+
+    .detail-panel.open { display: block; }
+
+    .detail-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .badge {
+      border-radius: 999px;
+      background: #dcfce7;
+      color: #166534;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    @media (max-width: 920px) {
+      .top-grid,
+      .toolbar {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
-<body class="bg-blobs">
-  <header>
-    <div class="container nav">
-      <div class="logo">
-        <div class="logo-badge" aria-hidden="true"></div>
-        <span>Алексей &nbsp;•&nbsp; Трезвость как проект</span>
+<body>
+  <main class="container">
+    <h1>Калькулятор покрытий для быстрых смет</h1>
+    <p class="lead">Приложение считывает типы покрытий проекта, формирует строки по каждому покрытию с возможностью менять стоимость и количество (м²/м³/шт/м.п.), а также открывать детальный расчёт конструкции слоями.</p>
+
+    <section class="card">
+      <h2>Импорт покрытий из проекта (JSON)</h2>
+      <div class="toolbar">
+        <label>
+          <div class="muted" style="margin-bottom:6px;">Формат: массив объектов <code>{"code","name","quantity","unit","price"}</code></div>
+          <textarea id="projectJson" spellcheck="false"></textarea>
+        </label>
+        <div style="display:grid; gap:8px;">
+          <button id="applyProject">Применить JSON проекта</button>
+          <button class="secondary" id="loadDemo">Загрузить демо-проект</button>
+        </div>
       </div>
-      <nav style="display:flex; gap:14px; align-items:center;">
-        <a href="#story">История</a>
-        <a href="#method">Метод</a>
-        <a href="#results">Результаты</a>
-        <a href="#faq">FAQ</a>
-        <a class="cta" href="#utp" role="button" aria-label="Записаться">
-          <!-- inline icon -->
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M5 12h14M12 5l7 7-7 7"/>
-          </svg>
-          Получить план
-        </a>
-      </nav>
+      <div id="importNote" class="muted" style="margin-top:8px;"></div>
+    </section>
+
+    <div class="top-grid">
+      <section class="card">
+        <h2>Спецификация покрытий</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Марка</th>
+              <th>Тип покрытия</th>
+              <th>Кол-во</th>
+              <th>Ед.</th>
+              <th>Цена за ед., ₽</th>
+              <th>Сумма, ₽</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="coveringsBody"></tbody>
+        </table>
+      </section>
+
+      <aside class="card">
+        <h2>Итого по смете</h2>
+        <div class="summary-item">
+          <div class="muted">Всего покрытий</div>
+          <b id="countCoverings">0</b>
+        </div>
+        <div class="summary-item">
+          <div class="muted">Общая стоимость</div>
+          <b id="totalEstimate">0 ₽</b>
+        </div>
+        <div class="summary-item">
+          <div class="muted">Рекомендуемый бюджетный диапазон</div>
+          <b id="rangeEstimate">0 ₽ — 0 ₽</b>
+        </div>
+      </aside>
     </div>
-  </header>
 
-  <main>
-    <!-- HERO -->
-    <section class="hero">
-      <div class="container">
-        <h1 class="headline reveal">«Я не боролся с алкоголем — я спроектировал новую жизнь»</h1>
-        <p class="sub reveal">Алексей прошёл путь от «пятницы каждый день» до ясной трезвости и собрал рабочую систему в 4 шага. Ни морализаторства, ни «силы воли на пределе». Только инженерный подход — как к проекту.</p>
-
-        <div class="hero-card">
-          <div class="glass hero-panel reveal">
-            <div class="tagline">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l3 3"/></svg>
-              14 дней — чтобы увидеть первые устойчивые изменения
-            </div>
-            <div class="checklist">
-              <div class="check">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M20 6L9 17l-5-5"/>
-                </svg>
-                <div><b>Без стыда и ломки:</b> меняем три ключевые привычки, которые «поджигают» желание выпить.</div>
-              </div>
-              <div class="check">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M20 6L9 17l-5-5"/>
-                </svg>
-                <div><b>С системой:</b> дневные сценарии, триггеры и «якоря» — всё прописано как ТЗ.</div>
-              </div>
-              <div class="check">
-                <svg viewBox="0 0 24 24  " fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M20 6L9 17l-5-5"/>
-                </svg>
-                <div><b>В своей скорости:</b> без запретов «навсегда», только чёткие спринты.</div>
-              </div>
-            </div>
-
-            <div class="hero-stats">
-              <div class="glass stat">
-                <b>14&nbsp;дней</b>
-                <div class="muted">первый спринт</div>
-              </div>
-              <div class="glass stat">
-                <b>4 шага</b>
-                <div class="muted">понятный метод</div>
-              </div>
-              <div class="glass stat">
-                <b>1&nbsp;план</b>
-                <div class="muted">под ваш ритм жизни</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="glass hero-panel reveal">
-            <h3 style="margin-bottom:6px;">Коротко об Алексее</h3>
-            <p class="muted">10 лет работал в стройке и IT-продуктах, привык думать как менеджер проекта. Трезвость собрал так же: гипотезы → спринты → ретро.</p>
-            <div class="timeline" style="margin-top: 14px;">
-              <div class="tl-item">
-                <b>Точка А:</b> «знали все: я — «за любой кипиш»»
-              </div>
-              <div class="tl-item">
-                <b>Срывные паттерны:</b> усталость, «наградить себя», компания
-              </div>
-              <div class="tl-item">
-                <b>Перелом:</b> заменил «запреты» на сценарии и метрики
-              </div>
-              <div class="tl-item">
-                <b>Точка Б:</b> чистая энергия, ясная голова, работа и семья в приоритете
-              </div>
-            </div>
-          </div>
-        </div>
-
+    <section id="detailPanel" class="card detail-panel">
+      <div class="detail-header">
+        <h2 id="detailTitle" style="margin:0;">Детализация покрытия</h2>
+        <span id="detailBadge" class="badge">По конструктивным слоям</span>
       </div>
-    </section>
-
-    <!-- STORY -->
-    <section id="story">
-      <div class="container">
-        <h2 class="section-title reveal">История без пафоса</h2>
-        <div class="grid-2">
-          <div class="glass step reveal">
-            <h3>01 — Осознать «систему» алкоголя</h3>
-            <p class="muted">Алкоголь — это не «слабость». Это набор триггеров, сценариев и наград. Когда видишь схему — перестаёшь видеть «чудовище».</p>
-          </div>
-          <div class="glass step reveal">
-            <h3>02 — Спринт на 14 дней</h3>
-            <p class="muted">Вместо клятвы «никогда» — небольшой спринт с понятными правилами и обратной связью. Так мозг не включает протест.</p>
-          </div>
-          <div class="glass step reveal">
-            <h3>03 — Смена трёх сцепок</h3>
-            <p class="muted">Меняем: <b>стресс→выпить</b>, <b>пятница→выпить</b>, <b>компания→выпить</b> на новые быстрые ритуалы и «якоря».</p>
-          </div>
-          <div class="glass step reveal">
-            <h3>04 — Метрики вместо эмоций</h3>
-            <p class="muted">Считаем сон, энергию, фокус, конфликты. Прогресс становится виден и закрепляется.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- METHOD -->
-    <section id="method">
-      <div class="container">
-        <h2 class="section-title reveal">Метод «Трезвость как проект»</h2>
-        <div class="grid-3">
-          <div class="glass step reveal">
-            <h3>Шаг 1. Диагностика</h3>
-            <p class="muted">30 минут, чтобы собрать карту триггеров и понять ваш контекст: ритм, работа, семья.</p>
-          </div>
-          <div class="glass step reveal">
-            <h3>Шаг 2. План</h3>
-            <p class="muted">Индивидуальный сценарий на 14 дней: что делать утром, днём и вечером, что говорить друзьям, чем заменять.</p>
-          </div>
-          <div class="glass step reveal">
-            <h3>Шаг 3. Сопровождение</h3>
-            <p class="muted">Чек-ин каждые 2–3 дня: корректируем план как настоящий продуктовый спринт.</p>
-          </div>
-        </div>
-
-        <div class="glass step reveal" style="margin-top:18px;">
-          <h3>Что внутри плана</h3>
-          <ul class="muted" style="padding-left: 18px; margin-top: 6px;">
-            <li>Новые вечерние ритуалы: «переключатели» на 15 минут</li>
-            <li>Скрипты ответов: как отказать без конфликтов</li>
-            <li>Список быстрых «дофамин-замен» дома и вне дома</li>
-            <li>Настройка сна и питания без фанатизма</li>
-            <li>Трекер метрик: сон, энергия, внимание, настроение</li>
-          </ul>
-        </div>
-      </div>
-    </section>
-
-    <!-- RESULTS -->
-    <section id="results">
-      <div class="container">
-        <h2 class="section-title reveal">Результаты и обратная связь</h2>
-        <div class="grid-3">
-          <div class="glass quote reveal">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 10h.01M15 10h.01M7 13h10a4 4 0 0 1-8 0"/></svg>
-            <p>«Впервые не срывался на «просто один бокал по пути домой». Понял, где меня «подхватывает», и заменил это на короткий ритуал»</p>
-            <div class="who">— Роман, 34</div>
-          </div>
-          <div class="glass quote reveal">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 10h.01M15 10h.01M7 13h10a4 4 0 0 1-8 0"/></svg>
-            <p>«Шаги простые, без морали. Работают, потому что считаем метрики, а не эмоции. Через неделю — ясная голова»</p>
-            <div class="who">— Влад, 29</div>
-          </div>
-          <div class="glass quote reveal">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 10h.01M15 10h.01M7 13h10a4 4 0 0 1-8 0"/></svg>
-            <p>«Раньше «запрещал себе» и срывался. Здесь нет запретов «на века» — есть план на 14 дней, и он лёгкий»</p>
-            <div class="who">— Кирилл, 31</div>
-          </div>
-        </div>
-
-        <div class="glass step reveal" style="margin-top:18px;">
-          <h3>Важно</h3>
-          <p class="muted">Метод — про поведение и среду, не про медицину. Если у вас зависимость с физическими симптомами — обратитесь к врачу. Это не медицинская услуга.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- FAQ -->
-    <section id="faq">
-      <div class="container">
-        <h2 class="section-title reveal">Частые вопросы</h2>
-        <div class="grid-2">
-          <div class="glass step reveal">
-            <h3>А если «всё пропало»?</h3>
-            <p class="muted">Срыв — это данные для улучшения сценария. Мы фиксируем причину и усиливаем «якоря» — без чувства вины.</p>
-          </div>
-          <div class="glass step reveal">
-            <h3>Нужна ли «стальная воля»?</h3>
-            <p class="muted">Нет. Мы не боремся с собой, мы перенастраиваем контексты. Это проще и устойчивее.</p>
-          </div>
-          <div class="glass step reveal">
-            <h3>Что с компанией и праздниками?</h3>
-            <p class="muted">Есть готовые сценарии: как отвечать, чем занять руки, как выйти красиво.</p>
-          </div>
-          <div class="glass step reveal">
-            <h3>Можно пить «иногда»?</h3>
-            <p class="muted">Это ваш выбор. Наша цель — вернуть контроль. Режим вы придумаете сами.</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- UTP -->
-    <section id="utp">
-      <div class="container">
-        <div class="glass utp reveal">
-          <div class="badge">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M12 1v22M1 12h22"/>
-            </svg>
-            Уникальное торговое предложение
-          </div>
-          <h2 class="section-title">«Личная стратегия трезвости — за 14 дней»</h2>
-          <p class="muted">Индивидуальный план + сопровождение. Если через 14 дней вы не видите пользу — просто скажите. Оплата — по факту результата.</p>
-          <div class="price">0 ₽ — диагностика · далее по результату</div>
-          <div class="pill-list" style="margin: 10px 0 16px;">
-            <div class="pill">30‑минутная диагностика</div>
-            <div class="pill">План на 14 дней</div>
-            <div class="pill">Чек‑ин каждые 2–3 дня</div>
-            <div class="pill">Скрипты и ритуалы</div>
-            <div class="pill">Трекер прогресса</div>
-          </div>
-          <div style="display:flex; gap:10px; justify-content:center; flex-wrap: wrap;">
-            <a class="cta" href="#form" role="button" aria-label="Записаться">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M5 12h14M12 5l7 7-7 7"/>
-              </svg>
-              Записаться на диагностику
-            </a>
-            <a class="cta" href="#" id="shareBtn" role="button" aria-label="Поделиться" style="background: linear-gradient(135deg, var(--accent), var(--brand));">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/>
-                <path d="M16 6l-4-4-4 4"/>
-                <path d="M12 2v14"/>
-              </svg>
-              Поделиться
-            </a>
-          </div>
-        </div>
-
-        <!-- simple inline form (no backend) -->
-        <div id="form" class="glass step reveal" style="margin-top:18px;">
-          <h3>Оставить заявку</h3>
-          <p class="muted">Оставьте контакт — Алексей свяжется и проведёт бесплатную диагностику.</p>
-          <form onsubmit="event.preventDefault(); submitLead(this)">
-            <div class="grid-2">
-              <label class="step">
-                <div>Имя</div>
-                <input required name="name" placeholder="Ваше имя" class="glass" style="padding:12px; width:100%; border-radius:12px; border:1px solid rgba(15,23,42,.08);" />
-              </label>
-              <label class="step">
-                <div>Контакт (телеграм/телефон/email)</div>
-                <input required name="contact" placeholder="@username или номер" class="glass" style="padding:12px; width:100%; border-radius:12px; border:1px solid rgba(15,23,42,.08);" />
-              </label>
-            </div>
-            <label class="step" style="display:block;">
-              <div>Комментарий</div>
-              <textarea name="msg" rows="4" placeholder="Коротко о вашей цели" class="glass" style="padding:12px; width:100%; border-radius:12px; border:1px solid rgba(15,23,42,.08);"></textarea>
-            </label>
-            <button class="cta" type="submit">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M5 12h14M12 5l7 7-7 7"/>
-              </svg>
-              Отправить
-            </button>
-            <div id="formNote" class="muted" style="margin-top:10px; font-size: 14px;"></div>
-          </form>
-        </div>
-      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Слой</th>
+            <th>Тип расчёта</th>
+            <th>Норма на 1 ед.</th>
+            <th>Толщина, мм</th>
+            <th>Ед. слоя</th>
+            <th>Цена ед., ₽</th>
+            <th>Объём слоя</th>
+            <th>Сумма, ₽</th>
+          </tr>
+        </thead>
+        <tbody id="layersBody"></tbody>
+      </table>
+      <div style="margin-top:10px;" class="sum">Итого по слоям: <span id="layersTotal">0 ₽</span></div>
+      <div class="muted" style="margin-top:6px;">Для слоёв доступно редактирование нормы, толщины и цены. Это позволяет выполнить углублённый расчёт по конструкции (например: уплотнение грунта → пленка → щебень 200 мм → бетонирование).</div>
     </section>
   </main>
 
-  <footer>
-    <div class="container foot">
-      <div>© <span id="y"></span> Алексей — «Трезвость как проект»</div>
-      <div class="muted" style="font-size: 13px;">Отказ от ответственности: не медицинская услуга. При наличии симптомов зависимости — обратитесь к врачу.</div>
-    </div>
-  </footer>
-
   <script>
-    // Year
-    document.getElementById('y').textContent = new Date().getFullYear();
+    const DEMO_PROJECT = [
+      { code: '1', name: 'Асфальтобетон', quantity: 1637, unit: 'м²', price: 2650, typeKey: 'asphalt' },
+      { code: '2', name: 'Монолитный бетон (покрытие)', quantity: 2659, unit: 'м²', price: 4300, typeKey: 'concrete' },
+      { code: '2.1', name: 'Монолитный бетон на стилобате', quantity: 544.18, unit: 'м²', price: 5900, typeKey: 'concreteStylobate' },
+      { code: '3', name: 'Брусчатка', quantity: 808.74, unit: 'м²', price: 3600, typeKey: 'pavers' },
+      { code: '4', name: 'Укреплённый грунт', quantity: 281.14, unit: 'м²', price: 2100, typeKey: 'reinforcedSoil' },
+      { code: '10', name: 'Пешеходные дорожки', quantity: 114.58, unit: 'м²', price: 5200, typeKey: 'concretePath' },
+      { code: '11', name: 'Подпорка склона', quantity: 58.23, unit: 'м²', price: 3900, typeKey: 'slopeSupport' },
+      { code: '9.1', name: 'Кашпо на стилобате', quantity: 50, unit: 'м³', price: 7400, typeKey: 'planter' }
+    ];
 
-    // IntersectionObserver reveal
-    const io = new IntersectionObserver(entries => {
-      entries.forEach(e => {
-        if (e.isIntersecting) e.target.classList.add('visible');
-      });
-    }, { threshold: .12, rootMargin: '0px 0px -60px 0px' });
-    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+    const LAYER_LIBRARY = {
+      asphalt: [
+        { name: 'Уплотнение местного грунта', calcType: 'area', norm: 1, thickness: 0, unit: 'м²', price: 120 },
+        { name: 'Щебень фракции 5-20', calcType: 'volume', norm: 1, thickness: 300, unit: 'м³', price: 2900 },
+        { name: 'Битумная эмульсия', calcType: 'area', norm: 1, thickness: 0, unit: 'м²', price: 95 },
+        { name: 'Асфальтобетон мелкозернистый 40 мм', calcType: 'volume', norm: 1, thickness: 40, unit: 'м³', price: 6900 }
+      ],
+      concrete: [
+        { name: 'Уплотнение грунта', calcType: 'area', norm: 1, thickness: 0, unit: 'м²', price: 130 },
+        { name: 'Плёнка разделительная', calcType: 'area', norm: 1, thickness: 0, unit: 'м²', price: 70 },
+        { name: 'Щебень 200 мм', calcType: 'volume', norm: 1, thickness: 200, unit: 'м³', price: 2700 },
+        { name: 'Бетонирование B25', calcType: 'volume', norm: 1, thickness: 150, unit: 'м³', price: 7900 }
+      ],
+      concreteStylobate: [
+        { name: 'Гидроизоляционная мембрана', calcType: 'area', norm: 1, thickness: 0, unit: 'м²', price: 260 },
+        { name: 'Дренажная мембрана', calcType: 'area', norm: 1, thickness: 0, unit: 'м²', price: 280 },
+        { name: 'Щебёночный слой', calcType: 'volume', norm: 1, thickness: 100, unit: 'м³', price: 3100 },
+        { name: 'Ж/б плита', calcType: 'volume', norm: 1, thickness: 150, unit: 'м³', price: 9500 }
+      ],
+      pavers: [
+        { name: 'Уплотнение грунта', calcType: 'area', norm: 1, thickness: 0, unit: 'м²', price: 120 },
+        { name: 'Щебень 200 мм', calcType: 'volume', norm: 1, thickness: 200, unit: 'м³', price: 2700 },
+        { name: 'Песок 50 мм', calcType: 'volume', norm: 1, thickness: 50, unit: 'м³', price: 2100 },
+        { name: 'Укладка брусчатки', calcType: 'area', norm: 1, thickness: 0, unit: 'м²', price: 1450 }
+      ],
+      reinforcedSoil: [
+        { name: 'Геотекстиль', calcType: 'area', norm: 1, thickness: 0, unit: 'м²', price: 85 },
+        { name: 'Щебень 200 мм', calcType: 'volume', norm: 1, thickness: 200, unit: 'м³', price: 2550 },
+        { name: 'Плодородный грунт 100 мм', calcType: 'volume', norm: 1, thickness: 100, unit: 'м³', price: 1800 },
+        { name: 'Посевной газон', calcType: 'area', norm: 1, thickness: 0, unit: 'м²', price: 290 }
+      ],
+      concretePath: [
+        { name: 'Уплотнение грунта', calcType: 'area', norm: 1, thickness: 0, unit: 'м²', price: 130 },
+        { name: 'Укладка полиэтиленовой плёнки', calcType: 'area', norm: 1, thickness: 0, unit: 'м²', price: 55 },
+        { name: 'Отсыпка щебнем 200 мм', calcType: 'volume', norm: 1, thickness: 200, unit: 'м³', price: 2700 },
+        { name: 'Бетонирование дорожки', calcType: 'volume', norm: 1, thickness: 120, unit: 'м³', price: 7600 }
+      ],
+      slopeSupport: [
+        { name: 'Георешетка/геотекстиль', calcType: 'area', norm: 1, thickness: 0, unit: 'м²', price: 340 },
+        { name: 'Щебёночная подсыпка 150 мм', calcType: 'volume', norm: 1, thickness: 150, unit: 'м³', price: 2600 },
+        { name: 'Укрепление откоса', calcType: 'area', norm: 1, thickness: 0, unit: 'м²', price: 980 }
+      ],
+      planter: [
+        { name: 'Гидроизоляция кашпо', calcType: 'area', norm: 1, thickness: 0, unit: 'м²', price: 290 },
+        { name: 'Дренажный слой', calcType: 'volume', norm: 1, thickness: 120, unit: 'м³', price: 2950 },
+        { name: 'Почвенная смесь', calcType: 'volume', norm: 1, thickness: 500, unit: 'м³', price: 3200 },
+        { name: 'Посадочный материал', calcType: 'fixed', norm: 1, thickness: 0, unit: 'компл', price: 140000 }
+      ],
+      default: [
+        { name: 'Подготовительные работы', calcType: 'area', norm: 1, thickness: 0, unit: 'м²', price: 100 },
+        { name: 'Основной слой', calcType: 'area', norm: 1, thickness: 0, unit: 'м²', price: 500 }
+      ]
+    };
 
-    // Share API
-    const shareBtn = document.getElementById('shareBtn');
-    if (shareBtn) {
-      shareBtn.addEventListener('click', async (e) => {
-        e.preventDefault();
-        const data = {
-          title: document.title,
-          text: 'Алексей — «Трезвость как проект». Мой путь и метод на 14 дней.',
-          url: location.href
-        };
-        if (navigator.share) {
-          try { await navigator.share(data); } 
-          catch(err){ /* ignore */ }
-        } else {
-          alert('Скопируйте ссылку: ' + location.href);
-        }
-      });
+    const state = {
+      coverings: [],
+      activeCoveringIndex: null
+    };
+
+    const currency = (value) => new Intl.NumberFormat('ru-RU').format(Math.round(value)) + ' ₽';
+    const qtyView = (value) => Number(value).toLocaleString('ru-RU', { maximumFractionDigits: 3 });
+
+    function cloneLayers(typeKey) {
+      const template = LAYER_LIBRARY[typeKey] || LAYER_LIBRARY.default;
+      return template.map(layer => ({ ...layer }));
     }
 
-    // Fake form (stores lead to localStorage; can be wired to Telegram Bot API or form backend)
-    function submitLead(form){
-      const name = form.name.value.trim();
-      const contact = form.contact.value.trim();
-      const msg = form.msg.value.trim();
-      const payload = { name, contact, msg, ts: new Date().toISOString() };
-      try{
-        const k = 'alx_leads';
-        const arr = JSON.parse(localStorage.getItem(k) || '[]');
-        arr.push(payload);
-        localStorage.setItem(k, JSON.stringify(arr));
-        document.getElementById('formNote').textContent = 'Готово! Заявка сохранена локально. Подключите отправку в Telegram — подскажу как.';
-        form.reset();
-        // subtle haptic (iOS Safari)
-        if (window.navigator && 'vibrate' in window.navigator) navigator.vibrate(12);
-      }catch(e){
-        document.getElementById('formNote').textContent = 'Не удалось сохранить локально. Напишите напрямую: @username';
+    function normalizeCovering(raw, idx) {
+      return {
+        code: String(raw.code ?? idx + 1),
+        name: String(raw.name ?? `Покрытие ${idx + 1}`),
+        quantity: Math.max(0, Number(raw.quantity) || 0),
+        unit: raw.unit || 'м²',
+        price: Math.max(0, Number(raw.price) || 0),
+        typeKey: raw.typeKey || 'default',
+        layers: Array.isArray(raw.layers) ? raw.layers.map(item => ({
+          name: item.name || 'Слой',
+          calcType: item.calcType || 'area',
+          norm: Number(item.norm) || 1,
+          thickness: Number(item.thickness) || 0,
+          unit: item.unit || 'м²',
+          price: Number(item.price) || 0
+        })) : cloneLayers(raw.typeKey || 'default')
+      };
+    }
+
+    function loadProject(rows) {
+      state.coverings = rows.map(normalizeCovering);
+      state.activeCoveringIndex = null;
+      renderCoverings();
+      closeDetails();
+    }
+
+    function lineTotal(covering) {
+      return covering.quantity * covering.price;
+    }
+
+    function updateSummary() {
+      const total = state.coverings.reduce((sum, item) => sum + lineTotal(item), 0);
+      document.getElementById('countCoverings').textContent = String(state.coverings.length);
+      document.getElementById('totalEstimate').textContent = currency(total);
+      document.getElementById('rangeEstimate').textContent = `${currency(total * 0.9)} — ${currency(total * 1.15)}`;
+    }
+
+    function renderCoverings() {
+      const body = document.getElementById('coveringsBody');
+      body.innerHTML = '';
+
+      state.coverings.forEach((item, idx) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${item.code}</td>
+          <td>${item.name}</td>
+          <td><input type="number" min="0" step="0.01" data-field="quantity" data-index="${idx}" value="${item.quantity}"></td>
+          <td>
+            <select data-field="unit" data-index="${idx}">
+              ${['м²', 'м³', 'шт', 'м.п.'].map(u => `<option ${u === item.unit ? 'selected' : ''}>${u}</option>`).join('')}
+            </select>
+          </td>
+          <td><input type="number" min="0" step="1" data-field="price" data-index="${idx}" value="${item.price}"></td>
+          <td class="sum">${currency(lineTotal(item))}</td>
+          <td><button class="secondary" data-action="detail" data-index="${idx}">Детальный расчёт</button></td>
+        `;
+        body.appendChild(tr);
+      });
+
+      updateSummary();
+    }
+
+    function layerVolume(covering, layer) {
+      const base = covering.quantity * (Number(layer.norm) || 0);
+      if (layer.calcType === 'volume') {
+        return base * ((Number(layer.thickness) || 0) / 1000);
       }
+      if (layer.calcType === 'fixed') {
+        return Number(layer.norm) || 0;
+      }
+      return base;
     }
+
+    function renderDetails(index) {
+      const covering = state.coverings[index];
+      if (!covering) return;
+
+      state.activeCoveringIndex = index;
+      const panel = document.getElementById('detailPanel');
+      panel.classList.add('open');
+      document.getElementById('detailTitle').textContent = `Детализация: ${covering.code} — ${covering.name}`;
+      document.getElementById('detailBadge').textContent = `${qtyView(covering.quantity)} ${covering.unit}`;
+
+      const body = document.getElementById('layersBody');
+      body.innerHTML = '';
+
+      let total = 0;
+      covering.layers.forEach((layer, layerIdx) => {
+        const qty = layerVolume(covering, layer);
+        const sum = qty * layer.price;
+        total += sum;
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><input data-layer-field="name" data-covering-index="${index}" data-layer-index="${layerIdx}" value="${layer.name}"></td>
+          <td>
+            <select data-layer-field="calcType" data-covering-index="${index}" data-layer-index="${layerIdx}">
+              <option value="area" ${layer.calcType === 'area' ? 'selected' : ''}>По площади</option>
+              <option value="volume" ${layer.calcType === 'volume' ? 'selected' : ''}>По объёму</option>
+              <option value="fixed" ${layer.calcType === 'fixed' ? 'selected' : ''}>Фикс.</option>
+            </select>
+          </td>
+          <td><input type="number" min="0" step="0.01" data-layer-field="norm" data-covering-index="${index}" data-layer-index="${layerIdx}" value="${layer.norm}"></td>
+          <td><input type="number" min="0" step="1" data-layer-field="thickness" data-covering-index="${index}" data-layer-index="${layerIdx}" value="${layer.thickness}"></td>
+          <td><input data-layer-field="unit" data-covering-index="${index}" data-layer-index="${layerIdx}" value="${layer.unit}"></td>
+          <td><input type="number" min="0" step="1" data-layer-field="price" data-covering-index="${index}" data-layer-index="${layerIdx}" value="${layer.price}"></td>
+          <td>${qtyView(qty)} ${layer.unit}</td>
+          <td class="sum">${currency(sum)}</td>
+        `;
+        body.appendChild(tr);
+      });
+
+      document.getElementById('layersTotal').textContent = currency(total);
+    }
+
+    function closeDetails() {
+      document.getElementById('detailPanel').classList.remove('open');
+      document.getElementById('layersBody').innerHTML = '';
+    }
+
+    document.body.addEventListener('input', (event) => {
+      const field = event.target.dataset.field;
+      const index = Number(event.target.dataset.index);
+      if (field && Number.isInteger(index)) {
+        const item = state.coverings[index];
+        if (!item) return;
+        if (field === 'quantity' || field === 'price') {
+          item[field] = Math.max(0, Number(event.target.value) || 0);
+        } else {
+          item[field] = event.target.value;
+        }
+        renderCoverings();
+        if (state.activeCoveringIndex === index) renderDetails(index);
+      }
+
+      const layerField = event.target.dataset.layerField;
+      const cIdx = Number(event.target.dataset.coveringIndex);
+      const lIdx = Number(event.target.dataset.layerIndex);
+      if (layerField && Number.isInteger(cIdx) && Number.isInteger(lIdx)) {
+        const layer = state.coverings[cIdx]?.layers?.[lIdx];
+        if (!layer) return;
+        if (['norm', 'thickness', 'price'].includes(layerField)) {
+          layer[layerField] = Math.max(0, Number(event.target.value) || 0);
+        } else {
+          layer[layerField] = event.target.value;
+        }
+        renderDetails(cIdx);
+      }
+    });
+
+    document.body.addEventListener('click', (event) => {
+      const action = event.target.dataset.action;
+      const index = Number(event.target.dataset.index);
+      if (action === 'detail' && Number.isInteger(index)) {
+        renderDetails(index);
+      }
+    });
+
+    document.getElementById('applyProject').addEventListener('click', () => {
+      const note = document.getElementById('importNote');
+      const raw = document.getElementById('projectJson').value.trim();
+      try {
+        const parsed = JSON.parse(raw);
+        if (!Array.isArray(parsed)) throw new Error('JSON должен быть массивом');
+        loadProject(parsed);
+        note.textContent = `Импортировано покрытий: ${parsed.length}`;
+      } catch (err) {
+        note.textContent = `Ошибка импорта: ${err.message}`;
+      }
+    });
+
+    document.getElementById('loadDemo').addEventListener('click', () => {
+      loadProject(DEMO_PROJECT);
+      document.getElementById('importNote').textContent = 'Загружен демонстрационный проект по схеме покрытий.';
+      document.getElementById('projectJson').value = JSON.stringify(DEMO_PROJECT, null, 2);
+    });
+
+    loadProject(DEMO_PROJECT);
+    document.getElementById('projectJson').value = JSON.stringify(DEMO_PROJECT, null, 2);
   </script>
 </body>
 </html>
