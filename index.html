@@ -3,64 +3,45 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Онлайн калькулятор для быстрых смет</title>
+  <title>Калькулятор покрытий — быстрые сметы по проекту</title>
   <style>
     :root {
-      --bg: #f4f7ff;
+      --bg: #f3f6ff;
       --card: #ffffff;
-      --text: #1f2937;
-      --muted: #6b7280;
+      --text: #0f172a;
+      --muted: #64748b;
       --accent: #4f46e5;
-      --accent-2: #22c55e;
-      --border: #e5e7eb;
-      --shadow: 0 10px 30px rgba(79, 70, 229, 0.12);
-      --radius: 18px;
+      --border: #dbe1ef;
+      --shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+      --radius: 16px;
     }
 
     * { box-sizing: border-box; }
+
     body {
       margin: 0;
       font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       color: var(--text);
-      background: linear-gradient(180deg, #eef2ff 0%, var(--bg) 40%, #ffffff 100%);
+      background: linear-gradient(180deg, #e9efff 0%, var(--bg) 40%, #ffffff 100%);
     }
 
     .container {
-      width: min(980px, 92vw);
+      width: min(1160px, 94vw);
       margin: 0 auto;
-    }
-
-    header {
-      padding: 48px 0 24px;
-      text-align: center;
+      padding: 24px 0 36px;
     }
 
     h1 {
       margin: 0;
-      font-size: clamp(30px, 6vw, 52px);
-      line-height: 1.05;
+      font-size: clamp(28px, 4vw, 44px);
+      line-height: 1.1;
       letter-spacing: -0.02em;
     }
 
     .lead {
-      margin: 14px auto 0;
-      max-width: 700px;
+      margin: 10px 0 0;
+      max-width: 900px;
       color: var(--muted);
-      font-size: clamp(16px, 2.5vw, 20px);
-    }
-
-    main {
-      padding-bottom: 48px;
-    }
-
-    .grid {
-      display: grid;
-      gap: 18px;
-      grid-template-columns: 1.2fr 0.8fr;
-    }
-
-    @media (max-width: 860px) {
-      .grid { grid-template-columns: 1fr; }
     }
 
     .card {
@@ -68,228 +49,465 @@
       border: 1px solid var(--border);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
-      padding: clamp(16px, 2.6vw, 28px);
+      padding: 18px;
+      margin-top: 16px;
     }
 
-    .title {
-      margin: 0 0 14px;
-      font-size: 22px;
+    .toolbar {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: 1fr auto;
+      align-items: end;
     }
 
-    .field {
-      margin-bottom: 14px;
+    .toolbar textarea {
+      min-height: 98px;
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      padding: 10px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 13px;
     }
 
-    label {
-      display: block;
-      margin-bottom: 6px;
+    button {
+      border: none;
+      background: linear-gradient(135deg, var(--accent), #7c3aed);
+      color: #fff;
+      border-radius: 12px;
+      padding: 11px 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    button.secondary {
+      background: #eef2ff;
+      color: #312e81;
+      border: 1px solid #c7d2fe;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
       font-size: 14px;
+    }
+
+    th, td {
+      border-bottom: 1px solid var(--border);
+      padding: 8px 6px;
+      vertical-align: top;
+    }
+
+    th {
+      text-align: left;
       color: var(--muted);
-      font-weight: 600;
+      font-weight: 700;
+      white-space: nowrap;
     }
 
     input, select {
       width: 100%;
-      padding: 12px 13px;
-      border-radius: 12px;
+      border-radius: 10px;
       border: 1px solid var(--border);
-      font-size: 16px;
-      outline: none;
+      padding: 7px 8px;
+      font-size: 14px;
       background: #fff;
     }
 
-    input:focus, select:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+    .sum {
+      font-weight: 800;
+      white-space: nowrap;
     }
 
-    .checkbox {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      margin: 8px 0;
-      color: var(--text);
-      font-size: 15px;
-    }
-
-    .checkbox input {
-      width: 18px;
-      height: 18px;
-    }
-
-    button {
-      border: 0;
-      border-radius: 12px;
-      background: linear-gradient(135deg, var(--accent), #7c3aed);
-      color: #fff;
-      width: 100%;
-      font-weight: 700;
-      padding: 13px 16px;
-      font-size: 16px;
-      cursor: pointer;
-      transition: transform 0.15s ease;
-    }
-
-    button:hover { transform: translateY(-1px); }
-
-    .result {
+    .top-grid {
       display: grid;
-      gap: 12px;
+      gap: 16px;
+      grid-template-columns: 1.3fr 0.7fr;
     }
 
-    .result-box {
-      border-radius: 14px;
-      padding: 14px;
+    .muted { color: var(--muted); }
+
+    .summary-item {
       background: #f8faff;
-      border: 1px solid #e4e8ff;
+      border: 1px solid #dfe7ff;
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 10px;
     }
 
-    .result-box b {
-      font-size: 24px;
+    .summary-item b { font-size: 22px; }
+
+    .detail-panel {
+      margin-top: 18px;
+      display: none;
     }
 
-    .meta {
-      color: var(--muted);
-      font-size: 14px;
-      margin-top: 3px;
+    .detail-panel.open { display: block; }
+
+    .detail-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
     }
 
     .badge {
-      display: inline-block;
-      margin-top: 8px;
-      padding: 8px 10px;
       border-radius: 999px;
-      font-size: 13px;
-      font-weight: 700;
-      background: rgba(34, 197, 94, 0.16);
+      background: #dcfce7;
       color: #166534;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 700;
     }
 
-    .hint {
-      color: var(--muted);
-      font-size: 14px;
-      margin-top: 14px;
-      line-height: 1.45;
-    }
-
-    .list {
-      margin: 0;
-      padding-left: 18px;
-      color: var(--muted);
-      line-height: 1.5;
-      font-size: 14px;
+    @media (max-width: 920px) {
+      .top-grid,
+      .toolbar {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
 <body>
-  <header class="container">
-    <h1>Онлайн калькулятор<br>для быстрых смет</h1>
-    <p class="lead">Рассчитайте предварительную стоимость ремонта или отделки за 30 секунд: площадь, тип работ, материалы и срочность.</p>
-  </header>
-
   <main class="container">
-    <section class="grid">
-      <article class="card">
-        <h2 class="title">Параметры объекта</h2>
+    <h1>Калькулятор покрытий для быстрых смет</h1>
+    <p class="lead">Приложение считывает типы покрытий проекта, формирует строки по каждому покрытию с возможностью менять стоимость и количество (м²/м³/шт/м.п.), а также открывать детальный расчёт конструкции слоями.</p>
 
-        <div class="field">
-          <label for="workType">Тип работ</label>
-          <select id="workType">
-            <option value="2800">Косметический ремонт</option>
-            <option value="5200">Капитальный ремонт</option>
-            <option value="7800">Ремонт под ключ</option>
-            <option value="3500">Офисная отделка</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label for="area">Площадь, м²</label>
-          <input id="area" type="number" min="1" value="45" />
-        </div>
-
-        <div class="field">
-          <label for="condition">Состояние помещения</label>
-          <select id="condition">
-            <option value="1">Новостройка</option>
-            <option value="1.15">Вторичка (умеренный демонтаж)</option>
-            <option value="1.35">Старый фонд (сложный демонтаж)</option>
-          </select>
-        </div>
-
-        <div class="field">
-          <label for="material">Материалы</label>
-          <select id="material">
-            <option value="1">Эконом</option>
-            <option value="1.2" selected>Стандарт</option>
-            <option value="1.45">Премиум</option>
-          </select>
-        </div>
-
-        <label class="checkbox" for="urgent">
-          <input type="checkbox" id="urgent" />
-          Нужен срочный запуск (до 7 дней)
+    <section class="card">
+      <h2>Импорт покрытий из проекта (JSON)</h2>
+      <div class="toolbar">
+        <label>
+          <div class="muted" style="margin-bottom:6px;">Формат: массив объектов <code>{"code","name","quantity","unit","price"}</code></div>
+          <textarea id="projectJson" spellcheck="false"></textarea>
         </label>
-
-        <button id="calcBtn" type="button">Рассчитать смету</button>
-      </article>
-
-      <aside class="card result">
-        <h2 class="title">Предварительная смета</h2>
-
-        <div class="result-box">
-          <div>Итоговая стоимость:</div>
-          <b id="total">0 ₽</b>
-          <div class="meta" id="range">Диапазон: 0 ₽ — 0 ₽</div>
+        <div style="display:grid; gap:8px;">
+          <button id="applyProject">Применить JSON проекта</button>
+          <button class="secondary" id="loadDemo">Загрузить демо-проект</button>
         </div>
+      </div>
+      <div id="importNote" class="muted" style="margin-top:8px;"></div>
+    </section>
 
-        <div class="result-box">
-          <div>Ориентировочный срок:</div>
-          <b id="days">0 дней</b>
-          <div class="meta">Срок зависит от сложности и доступности материалов.</div>
+    <div class="top-grid">
+      <section class="card">
+        <h2>Спецификация покрытий</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Марка</th>
+              <th>Тип покрытия</th>
+              <th>Кол-во</th>
+              <th>Ед.</th>
+              <th>Цена за ед., ₽</th>
+              <th>Сумма, ₽</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="coveringsBody"></tbody>
+        </table>
+      </section>
+
+      <aside class="card">
+        <h2>Итого по смете</h2>
+        <div class="summary-item">
+          <div class="muted">Всего покрытий</div>
+          <b id="countCoverings">0</b>
         </div>
-
-        <div class="badge" id="note">Введите параметры и нажмите «Рассчитать смету»</div>
-
-        <div class="hint">
-          <ul class="list">
-            <li>Расчёт ориентировочный, не является публичной офертой.</li>
-            <li>Вы можете добавить свои коэффициенты в коде под задачи компании.</li>
-            <li>Подходит как лид-магнит на лендинге или для менеджеров отдела продаж.</li>
-          </ul>
+        <div class="summary-item">
+          <div class="muted">Общая стоимость</div>
+          <b id="totalEstimate">0 ₽</b>
+        </div>
+        <div class="summary-item">
+          <div class="muted">Рекомендуемый бюджетный диапазон</div>
+          <b id="rangeEstimate">0 ₽ — 0 ₽</b>
         </div>
       </aside>
+    </div>
+
+    <section id="detailPanel" class="card detail-panel">
+      <div class="detail-header">
+        <h2 id="detailTitle" style="margin:0;">Детализация покрытия</h2>
+        <span id="detailBadge" class="badge">По конструктивным слоям</span>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Слой</th>
+            <th>Тип расчёта</th>
+            <th>Норма на 1 ед.</th>
+            <th>Толщина, мм</th>
+            <th>Ед. слоя</th>
+            <th>Цена ед., ₽</th>
+            <th>Объём слоя</th>
+            <th>Сумма, ₽</th>
+          </tr>
+        </thead>
+        <tbody id="layersBody"></tbody>
+      </table>
+      <div style="margin-top:10px;" class="sum">Итого по слоям: <span id="layersTotal">0 ₽</span></div>
+      <div class="muted" style="margin-top:6px;">Для слоёв доступно редактирование нормы, толщины и цены. Это позволяет выполнить углублённый расчёт по конструкции (например: уплотнение грунта → пленка → щебень 200 мм → бетонирование).</div>
     </section>
   </main>
 
   <script>
-    const format = (value) => new Intl.NumberFormat('ru-RU').format(Math.round(value)) + ' ₽';
+    const DEMO_PROJECT = [
+      { code: '1', name: 'Асфальтобетон', quantity: 1637, unit: 'м²', price: 2650, typeKey: 'asphalt' },
+      { code: '2', name: 'Монолитный бетон (покрытие)', quantity: 2659, unit: 'м²', price: 4300, typeKey: 'concrete' },
+      { code: '2.1', name: 'Монолитный бетон на стилобате', quantity: 544.18, unit: 'м²', price: 5900, typeKey: 'concreteStylobate' },
+      { code: '3', name: 'Брусчатка', quantity: 808.74, unit: 'м²', price: 3600, typeKey: 'pavers' },
+      { code: '4', name: 'Укреплённый грунт', quantity: 281.14, unit: 'м²', price: 2100, typeKey: 'reinforcedSoil' },
+      { code: '10', name: 'Пешеходные дорожки', quantity: 114.58, unit: 'м²', price: 5200, typeKey: 'concretePath' },
+      { code: '11', name: 'Подпорка склона', quantity: 58.23, unit: 'м²', price: 3900, typeKey: 'slopeSupport' },
+      { code: '9.1', name: 'Кашпо на стилобате', quantity: 50, unit: 'м³', price: 7400, typeKey: 'planter' }
+    ];
 
-    function calculateEstimate() {
-      const workType = Number(document.getElementById('workType').value);
-      const area = Math.max(1, Number(document.getElementById('area').value) || 0);
-      const condition = Number(document.getElementById('condition').value);
-      const material = Number(document.getElementById('material').value);
-      const urgent = document.getElementById('urgent').checked;
+    const LAYER_LIBRARY = {
+      asphalt: [
+        { name: 'Уплотнение местного грунта', calcType: 'area', norm: 1, thickness: 0, unit: 'м²', price: 120 },
+        { name: 'Щебень фракции 5-20', calcType: 'volume', norm: 1, thickness: 300, unit: 'м³', price: 2900 },
+        { name: 'Битумная эмульсия', calcType: 'area', norm: 1, thickness: 0, unit: 'м²', price: 95 },
+        { name: 'Асфальтобетон мелкозернистый 40 мм', calcType: 'volume', norm: 1, thickness: 40, unit: 'м³', price: 6900 }
+      ],
+      concrete: [
+        { name: 'Уплотнение грунта', calcType: 'area', norm: 1, thickness: 0, unit: 'м²', price: 130 },
+        { name: 'Плёнка разделительная', calcType: 'area', norm: 1, thickness: 0, unit: 'м²', price: 70 },
+        { name: 'Щебень 200 мм', calcType: 'volume', norm: 1, thickness: 200, unit: 'м³', price: 2700 },
+        { name: 'Бетонирование B25', calcType: 'volume', norm: 1, thickness: 150, unit: 'м³', price: 7900 }
+      ],
+      concreteStylobate: [
+        { name: 'Гидроизоляционная мембрана', calcType: 'area', norm: 1, thickness: 0, unit: 'м²', price: 260 },
+        { name: 'Дренажная мембрана', calcType: 'area', norm: 1, thickness: 0, unit: 'м²', price: 280 },
+        { name: 'Щебёночный слой', calcType: 'volume', norm: 1, thickness: 100, unit: 'м³', price: 3100 },
+        { name: 'Ж/б плита', calcType: 'volume', norm: 1, thickness: 150, unit: 'м³', price: 9500 }
+      ],
+      pavers: [
+        { name: 'Уплотнение грунта', calcType: 'area', norm: 1, thickness: 0, unit: 'м²', price: 120 },
+        { name: 'Щебень 200 мм', calcType: 'volume', norm: 1, thickness: 200, unit: 'м³', price: 2700 },
+        { name: 'Песок 50 мм', calcType: 'volume', norm: 1, thickness: 50, unit: 'м³', price: 2100 },
+        { name: 'Укладка брусчатки', calcType: 'area', norm: 1, thickness: 0, unit: 'м²', price: 1450 }
+      ],
+      reinforcedSoil: [
+        { name: 'Геотекстиль', calcType: 'area', norm: 1, thickness: 0, unit: 'м²', price: 85 },
+        { name: 'Щебень 200 мм', calcType: 'volume', norm: 1, thickness: 200, unit: 'м³', price: 2550 },
+        { name: 'Плодородный грунт 100 мм', calcType: 'volume', norm: 1, thickness: 100, unit: 'м³', price: 1800 },
+        { name: 'Посевной газон', calcType: 'area', norm: 1, thickness: 0, unit: 'м²', price: 290 }
+      ],
+      concretePath: [
+        { name: 'Уплотнение грунта', calcType: 'area', norm: 1, thickness: 0, unit: 'м²', price: 130 },
+        { name: 'Укладка полиэтиленовой плёнки', calcType: 'area', norm: 1, thickness: 0, unit: 'м²', price: 55 },
+        { name: 'Отсыпка щебнем 200 мм', calcType: 'volume', norm: 1, thickness: 200, unit: 'м³', price: 2700 },
+        { name: 'Бетонирование дорожки', calcType: 'volume', norm: 1, thickness: 120, unit: 'м³', price: 7600 }
+      ],
+      slopeSupport: [
+        { name: 'Георешетка/геотекстиль', calcType: 'area', norm: 1, thickness: 0, unit: 'м²', price: 340 },
+        { name: 'Щебёночная подсыпка 150 мм', calcType: 'volume', norm: 1, thickness: 150, unit: 'м³', price: 2600 },
+        { name: 'Укрепление откоса', calcType: 'area', norm: 1, thickness: 0, unit: 'м²', price: 980 }
+      ],
+      planter: [
+        { name: 'Гидроизоляция кашпо', calcType: 'area', norm: 1, thickness: 0, unit: 'м²', price: 290 },
+        { name: 'Дренажный слой', calcType: 'volume', norm: 1, thickness: 120, unit: 'м³', price: 2950 },
+        { name: 'Почвенная смесь', calcType: 'volume', norm: 1, thickness: 500, unit: 'м³', price: 3200 },
+        { name: 'Посадочный материал', calcType: 'fixed', norm: 1, thickness: 0, unit: 'компл', price: 140000 }
+      ],
+      default: [
+        { name: 'Подготовительные работы', calcType: 'area', norm: 1, thickness: 0, unit: 'м²', price: 100 },
+        { name: 'Основной слой', calcType: 'area', norm: 1, thickness: 0, unit: 'м²', price: 500 }
+      ]
+    };
 
-      const urgencyCoef = urgent ? 1.18 : 1;
-      const base = workType * area;
-      const total = base * condition * material * urgencyCoef;
-      const min = total * 0.9;
-      const max = total * 1.12;
+    const state = {
+      coverings: [],
+      activeCoveringIndex: null
+    };
 
-      const dayRate = workType >= 7000 ? 1.8 : workType >= 5000 ? 1.4 : 1.1;
-      const days = Math.max(7, Math.round(area * dayRate * condition * (urgent ? 0.85 : 1)));
+    const currency = (value) => new Intl.NumberFormat('ru-RU').format(Math.round(value)) + ' ₽';
+    const qtyView = (value) => Number(value).toLocaleString('ru-RU', { maximumFractionDigits: 3 });
 
-      document.getElementById('total').textContent = format(total);
-      document.getElementById('range').textContent = `Диапазон: ${format(min)} — ${format(max)}`;
-      document.getElementById('days').textContent = `${days} дней`;
-      document.getElementById('note').textContent = urgent
-        ? 'Учтена наценка за срочность +18%.'
-        : 'Стандартный режим: без наценки за срочность.';
+    function cloneLayers(typeKey) {
+      const template = LAYER_LIBRARY[typeKey] || LAYER_LIBRARY.default;
+      return template.map(layer => ({ ...layer }));
     }
 
-    document.getElementById('calcBtn').addEventListener('click', calculateEstimate);
-    calculateEstimate();
+    function normalizeCovering(raw, idx) {
+      return {
+        code: String(raw.code ?? idx + 1),
+        name: String(raw.name ?? `Покрытие ${idx + 1}`),
+        quantity: Math.max(0, Number(raw.quantity) || 0),
+        unit: raw.unit || 'м²',
+        price: Math.max(0, Number(raw.price) || 0),
+        typeKey: raw.typeKey || 'default',
+        layers: Array.isArray(raw.layers) ? raw.layers.map(item => ({
+          name: item.name || 'Слой',
+          calcType: item.calcType || 'area',
+          norm: Number(item.norm) || 1,
+          thickness: Number(item.thickness) || 0,
+          unit: item.unit || 'м²',
+          price: Number(item.price) || 0
+        })) : cloneLayers(raw.typeKey || 'default')
+      };
+    }
+
+    function loadProject(rows) {
+      state.coverings = rows.map(normalizeCovering);
+      state.activeCoveringIndex = null;
+      renderCoverings();
+      closeDetails();
+    }
+
+    function lineTotal(covering) {
+      return covering.quantity * covering.price;
+    }
+
+    function updateSummary() {
+      const total = state.coverings.reduce((sum, item) => sum + lineTotal(item), 0);
+      document.getElementById('countCoverings').textContent = String(state.coverings.length);
+      document.getElementById('totalEstimate').textContent = currency(total);
+      document.getElementById('rangeEstimate').textContent = `${currency(total * 0.9)} — ${currency(total * 1.15)}`;
+    }
+
+    function renderCoverings() {
+      const body = document.getElementById('coveringsBody');
+      body.innerHTML = '';
+
+      state.coverings.forEach((item, idx) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${item.code}</td>
+          <td>${item.name}</td>
+          <td><input type="number" min="0" step="0.01" data-field="quantity" data-index="${idx}" value="${item.quantity}"></td>
+          <td>
+            <select data-field="unit" data-index="${idx}">
+              ${['м²', 'м³', 'шт', 'м.п.'].map(u => `<option ${u === item.unit ? 'selected' : ''}>${u}</option>`).join('')}
+            </select>
+          </td>
+          <td><input type="number" min="0" step="1" data-field="price" data-index="${idx}" value="${item.price}"></td>
+          <td class="sum">${currency(lineTotal(item))}</td>
+          <td><button class="secondary" data-action="detail" data-index="${idx}">Детальный расчёт</button></td>
+        `;
+        body.appendChild(tr);
+      });
+
+      updateSummary();
+    }
+
+    function layerVolume(covering, layer) {
+      const base = covering.quantity * (Number(layer.norm) || 0);
+      if (layer.calcType === 'volume') {
+        return base * ((Number(layer.thickness) || 0) / 1000);
+      }
+      if (layer.calcType === 'fixed') {
+        return Number(layer.norm) || 0;
+      }
+      return base;
+    }
+
+    function renderDetails(index) {
+      const covering = state.coverings[index];
+      if (!covering) return;
+
+      state.activeCoveringIndex = index;
+      const panel = document.getElementById('detailPanel');
+      panel.classList.add('open');
+      document.getElementById('detailTitle').textContent = `Детализация: ${covering.code} — ${covering.name}`;
+      document.getElementById('detailBadge').textContent = `${qtyView(covering.quantity)} ${covering.unit}`;
+
+      const body = document.getElementById('layersBody');
+      body.innerHTML = '';
+
+      let total = 0;
+      covering.layers.forEach((layer, layerIdx) => {
+        const qty = layerVolume(covering, layer);
+        const sum = qty * layer.price;
+        total += sum;
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><input data-layer-field="name" data-covering-index="${index}" data-layer-index="${layerIdx}" value="${layer.name}"></td>
+          <td>
+            <select data-layer-field="calcType" data-covering-index="${index}" data-layer-index="${layerIdx}">
+              <option value="area" ${layer.calcType === 'area' ? 'selected' : ''}>По площади</option>
+              <option value="volume" ${layer.calcType === 'volume' ? 'selected' : ''}>По объёму</option>
+              <option value="fixed" ${layer.calcType === 'fixed' ? 'selected' : ''}>Фикс.</option>
+            </select>
+          </td>
+          <td><input type="number" min="0" step="0.01" data-layer-field="norm" data-covering-index="${index}" data-layer-index="${layerIdx}" value="${layer.norm}"></td>
+          <td><input type="number" min="0" step="1" data-layer-field="thickness" data-covering-index="${index}" data-layer-index="${layerIdx}" value="${layer.thickness}"></td>
+          <td><input data-layer-field="unit" data-covering-index="${index}" data-layer-index="${layerIdx}" value="${layer.unit}"></td>
+          <td><input type="number" min="0" step="1" data-layer-field="price" data-covering-index="${index}" data-layer-index="${layerIdx}" value="${layer.price}"></td>
+          <td>${qtyView(qty)} ${layer.unit}</td>
+          <td class="sum">${currency(sum)}</td>
+        `;
+        body.appendChild(tr);
+      });
+
+      document.getElementById('layersTotal').textContent = currency(total);
+    }
+
+    function closeDetails() {
+      document.getElementById('detailPanel').classList.remove('open');
+      document.getElementById('layersBody').innerHTML = '';
+    }
+
+    document.body.addEventListener('input', (event) => {
+      const field = event.target.dataset.field;
+      const index = Number(event.target.dataset.index);
+      if (field && Number.isInteger(index)) {
+        const item = state.coverings[index];
+        if (!item) return;
+        if (field === 'quantity' || field === 'price') {
+          item[field] = Math.max(0, Number(event.target.value) || 0);
+        } else {
+          item[field] = event.target.value;
+        }
+        renderCoverings();
+        if (state.activeCoveringIndex === index) renderDetails(index);
+      }
+
+      const layerField = event.target.dataset.layerField;
+      const cIdx = Number(event.target.dataset.coveringIndex);
+      const lIdx = Number(event.target.dataset.layerIndex);
+      if (layerField && Number.isInteger(cIdx) && Number.isInteger(lIdx)) {
+        const layer = state.coverings[cIdx]?.layers?.[lIdx];
+        if (!layer) return;
+        if (['norm', 'thickness', 'price'].includes(layerField)) {
+          layer[layerField] = Math.max(0, Number(event.target.value) || 0);
+        } else {
+          layer[layerField] = event.target.value;
+        }
+        renderDetails(cIdx);
+      }
+    });
+
+    document.body.addEventListener('click', (event) => {
+      const action = event.target.dataset.action;
+      const index = Number(event.target.dataset.index);
+      if (action === 'detail' && Number.isInteger(index)) {
+        renderDetails(index);
+      }
+    });
+
+    document.getElementById('applyProject').addEventListener('click', () => {
+      const note = document.getElementById('importNote');
+      const raw = document.getElementById('projectJson').value.trim();
+      try {
+        const parsed = JSON.parse(raw);
+        if (!Array.isArray(parsed)) throw new Error('JSON должен быть массивом');
+        loadProject(parsed);
+        note.textContent = `Импортировано покрытий: ${parsed.length}`;
+      } catch (err) {
+        note.textContent = `Ошибка импорта: ${err.message}`;
+      }
+    });
+
+    document.getElementById('loadDemo').addEventListener('click', () => {
+      loadProject(DEMO_PROJECT);
+      document.getElementById('importNote').textContent = 'Загружен демонстрационный проект по схеме покрытий.';
+      document.getElementById('projectJson').value = JSON.stringify(DEMO_PROJECT, null, 2);
+    });
+
+    loadProject(DEMO_PROJECT);
+    document.getElementById('projectJson').value = JSON.stringify(DEMO_PROJECT, null, 2);
   </script>
 </body>
 </html>
